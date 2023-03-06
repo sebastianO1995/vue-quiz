@@ -1,3 +1,3 @@
-# vue-quiz
-Simple Vue Quiz
-Vue JS and Vuex
+Simple Quiz
+
+- VUE, VUEX, and VITE
