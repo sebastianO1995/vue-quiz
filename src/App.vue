@@ -69,6 +69,24 @@ const optionClass = computed(() => {
     return SetOptionClass(index);
   };
 });
+
+const buttonText = computed(() => {
+  return getCurrentQuestion.value.index === questions.length - 1
+    ? "Finish"
+    : getCurrentQuestion.value.selected == null
+    ? "Select an option"
+    : "Next Question";
+});
+
+const restartQuiz = () => {
+  quizCompleted.value = false;
+  currentQuestion.value = 0;
+  questions.value.forEach((q) => (q.selected = null));
+};
+
+const goHome = () => {
+  console.log("go Home");
+};
 </script>
 
 <template>
@@ -92,18 +110,14 @@ const optionClass = computed(() => {
         />
       </div>
       <button :disabled="!getCurrentQuestion.selected" @click="NextQuestion">
-        {{
-          getCurrentQuestion.index === questions.length - 1
-            ? "Finish"
-            : getCurrentQuestion.selected == null
-            ? "Select an option"
-            : "Next Question"
-        }}
+        {{ buttonText }}
       </button>
     </section>
     <section v-else>
       <h2>You have finished the quiz!</h2>
       <p>Your Score is {{ score }} / {{ questions.length }}</p>
+      <button @click="restartQuiz">Restart Quiz</button>
+      <button @click="goHome">Select a new Quiz</button>
     </section>
   </main>
 </template>
