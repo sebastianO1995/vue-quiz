@@ -1,42 +1,59 @@
+import { createClient } from "contentful";
 import { createStore } from "vuex";
+const contentFulSpace = import.meta.env.VITE_SPACE || null;
+const token = import.meta.env.VITE_CONTENTFUL_TOKEN_DELIVERY || null;
 
+const contentfulClient = createClient({
+  space: contentFulSpace,
+  accessToken: token,
+});
 const store = createStore({
   state() {
     return {
-      questions: [
-        {
-          question: "What is 2+2",
-          answer: 2,
-          options: ["2", "5", "4"],
-          selected: null,
-        },
-        {
-          question: "What is 5+5",
-          answer: 0,
-          options: ["10", "1", "-5"],
-          selected: null,
-        },
-      ],
-      quizName: "Math",
+      quizes: [],
       isLoading: false,
-      error: false,
+      error: {
+        message: null,
+        hasError: false,
+      },
     };
   },
   getters: {
     hasQuizData(state) {
-      return !state.isLoading && state.questions.length > 0;
+      return (
+        !state.isLoading && state.quizes.length > 0 && !state.error.hasError
+      );
     },
   },
   mutations: {
     SET_LOADING(state, isLoading) {
       state.isLoading = isLoading;
     },
+    SET_ERROR(state, error) {
+      state.error = error;
+    },
   },
   actions: {
-    async fetchQuestions({ commit }) {
-      try {
+    fetchQuizes({ commit }) {
+      if (token !== null && contentFulSpace !== null) {
         commit("SET_LOADING", true);
-      } catch (error) {}
+        contentfulClient
+          .getContentType("quizd")
+          .then((contentType) => {
+            commit("SET_LOADING", false);
+
+            console.log(contentType);
+          })
+          .catch((error) => {
+            commit("SET_LOADING", false);
+
+            commit("SET_ERROR", {
+              hasError: true,
+              message:
+                JSON.parse(error.message)?.message || "No Quizes available",
+            });
+          });
+      }
     },
   },
 });
