@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-
+import QuestionOption from "./components/QuestionOption.vue";
 const questions = ref([
   {
     question: "What is 2+2",
@@ -48,6 +48,27 @@ const NextQuestion = () => {
     quizCompleted.value = true;
   }
 };
+
+const SetOptionClass = (index) => {
+  const questionToSee = getCurrentQuestion.value;
+  const validClass =
+    questionToSee.selected == index
+      ? index == questionToSee.answer
+        ? "correct"
+        : "wrong"
+      : "";
+  const disabledClass =
+    questionToSee.selected != null && index != questionToSee.selected
+      ? "disabled"
+      : "";
+  return `${validClass} ${disabledClass}`;
+};
+
+const optionClass = computed(() => {
+  return (index) => {
+    return SetOptionClass(index);
+  };
+});
 </script>
 
 <template>
@@ -59,32 +80,16 @@ const NextQuestion = () => {
         <span class="score">Score {{ score }} / {{ questions.length }}</span>
       </div>
       <div class="options">
-        <label
+        <QuestionOption
           v-for="(option, index) in getCurrentQuestion.options"
           :key="index"
-          :class="`option ${
-            getCurrentQuestion.selected == index
-              ? index == getCurrentQuestion.answer
-                ? 'correct'
-                : 'wrong'
-              : ''
-          } ${
-            getCurrentQuestion.selected != null &&
-            index != getCurrentQuestion.selected
-              ? 'disabled'
-              : ''
-          }`"
-        >
-          <input
-            type="radio"
-            :name="getCurrentQuestion.index"
-            :value="index"
-            v-model="getCurrentQuestion.selected"
-            :disabled="getCurrentQuestion.selected"
-            @change="SetAnswer"
-          />
-          <span>{{ option }}</span>
-        </label>
+          :optionText="option"
+          :name="getCurrentQuestion.index"
+          :class="optionClass(index)"
+          :value="index"
+          v-model="getCurrentQuestion.selected"
+          @onChangeHandler="SetAnswer"
+        />
       </div>
       <button :disabled="!getCurrentQuestion.selected" @click="NextQuestion">
         {{
