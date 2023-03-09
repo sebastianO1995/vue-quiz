@@ -22,8 +22,10 @@ const startQuiz = (id) => {
         <h2>Please select a quiz:</h2>
         <div class="quizes-container">
           <div v-for="(quiz, index) in quizList" class="quiz-box" :key="index">
-            <h4>{{ quiz.quizName }}</h4>
-            <p>Total Questions: {{ quiz.totalQuestions }}</p>
+            <div class="quiz-details">
+              <h3>{{ quiz.quizName }}</h3>
+              <p>Total Questions: {{ quiz.totalQuestions }}</p>
+            </div>
             <button @click="startQuiz(quiz.id)">Start Quiz</button>
           </div>
         </div>
@@ -51,7 +53,16 @@ article {
 }
 
 .quiz-box {
-  padding: 0.75rem;
+  padding: 1.25rem;
   border: 1px solid #fff;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+}
+.quiz-box .quiz-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 </style>

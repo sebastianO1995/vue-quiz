@@ -87,7 +87,8 @@ const goHome = () => {
       <div class="quiz-info">
         <span class="question">{{ getCurrentQuestion.question }}</span>
         <span class="score"
-          >Score: {{ score }} / {{ currentQuiz.totalQuestions }}
+          >Score
+          <span>{{ score }} / {{ currentQuiz.totalQuestions }}</span>
         </span>
       </div>
       <div class="options">
@@ -135,16 +136,19 @@ p {
   justify-content: space-between;
   margin-bottom: 1rem;
   align-items: center;
+  gap: 1.25rem;
 }
 .quiz-info .question {
   color: #8f8f8f;
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
-.quiz-info.score {
+.quiz-info .score {
   color: #fff;
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
-
+.score span {
+  display: block;
+}
 .options {
   margin-bottom: 1rem;
 }
