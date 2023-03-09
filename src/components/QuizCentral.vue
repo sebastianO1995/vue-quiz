@@ -5,22 +5,6 @@ import QuestionOption from "./components/QuestionOption.vue";
 
 const store = useStore();
 
-const quizName = computed(() => store.state.quizName);
-const questions = ref([
-  {
-    question: "What is 2+2",
-    answer: 2,
-    options: ["2", "5", "4"],
-    selected: null,
-  },
-  {
-    question: "What is 5+5",
-    answer: 0,
-    options: ["10", "1", "-5"],
-    selected: null,
-  },
-]);
-
 const quizCompleted = ref(false);
 const currentQuestion = ref(0);
 

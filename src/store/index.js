@@ -16,6 +16,7 @@ const store = createStore({
         message: null,
         hasError: false,
       },
+      selectedQuizId: null,
     };
   },
   getters: {
@@ -36,6 +37,7 @@ const store = createStore({
             questions: quiz.fields.questions,
             quizName: quiz.fields.quizName,
             totalQuestions: quiz.fields.questions.length,
+            id: quiz.sys.id,
           };
         });
       }
@@ -51,6 +53,9 @@ const store = createStore({
     },
     SET_QUIZES(state, quizArrayList) {
       state.quizes = quizArrayList;
+    },
+    SET_SELECTED_QUIZID(state, id) {
+      state.selectedQuizId = id;
     },
   },
   actions: {
@@ -74,6 +79,9 @@ const store = createStore({
             });
           });
       }
+    },
+    selectQuiz({ commit }, quizId) {
+      commit("SET_SELECTED_QUIZID", quizId);
     },
   },
 });
