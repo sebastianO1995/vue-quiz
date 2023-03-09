@@ -83,29 +83,37 @@ const goHome = () => {
 <template>
   <article>
     <h1>{{ currentQuiz.quizName }}</h1>
-    <section v-if="!quizCompleted" class="quiz">
-      <div class="quiz-info">
-        <span class="question">{{ getCurrentQuestion.question }}</span>
-        <span class="score"
-          >Score
-          <span>{{ score }} / {{ currentQuiz.totalQuestions }}</span>
-        </span>
+    <section class="quiz-container" v-if="!quizCompleted">
+      <div class="quiz">
+        <div class="quiz-info">
+          <span class="question">{{ getCurrentQuestion.question }}</span>
+          <span class="score"
+            >Score
+            <span>{{ score }} / {{ currentQuiz.totalQuestions }}</span>
+          </span>
+        </div>
+        <div class="options">
+          <QuestionOption
+            v-for="(option, index) in getCurrentQuestion.options"
+            :key="index"
+            :optionText="option"
+            :name="getCurrentQuestion.index"
+            :value="option"
+            v-model="currentQuestionAnswer"
+            @onChangeHandler="SetAnswer"
+            :class="optionClass(option)"
+          />
+        </div>
+        <button
+          :disabled="currentQuestionAnswer === null"
+          @click="NextQuestion"
+        >
+          {{ buttonText }}
+        </button>
       </div>
-      <div class="options">
-        <QuestionOption
-          v-for="(option, index) in getCurrentQuestion.options"
-          :key="index"
-          :optionText="option"
-          :name="getCurrentQuestion.index"
-          :value="option"
-          v-model="currentQuestionAnswer"
-          @onChangeHandler="SetAnswer"
-          :class="optionClass(option)"
-        />
+      <div class="quiz-footer">
+        <button class="quit-btn" @click="goHome">Quit Quiz</button>
       </div>
-      <button :disabled="currentQuestionAnswer === null" @click="NextQuestion">
-        {{ buttonText }}
-      </button>
     </section>
     <section v-else>
       <h2>You have finished the quiz!</h2>
@@ -162,5 +170,15 @@ button {
   display: flex;
   justify-content: space-around;
   gap: 0.5rem;
+}
+.quiz-footer {
+  width: 100%;
+  text-align: center;
+}
+.quit-btn {
+  margin: 0 auto;
+  background: #8a8a55;
+  color: black;
+  margin-top: 1.25rem;
 }
 </style>

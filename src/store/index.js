@@ -62,7 +62,7 @@ const store = createStore({
           .getEntries({ content_type: "quiz" })
           .then((entries) => {
             commit("SET_LOADING", false);
-            console.log(entries.items);
+
             commit(
               "SET_QUIZES",
               entries?.items.map((quiz) => {
