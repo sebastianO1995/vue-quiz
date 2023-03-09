@@ -1,3 +1,3 @@
 Simple Quiz
 
-- VUE, VUEX, and VITE
+- VUE, VUEX, Contentful and VITE
