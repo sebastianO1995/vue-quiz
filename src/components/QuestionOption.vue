@@ -36,4 +36,31 @@ const selected = computed(() => {
   </label>
 </template>
 
-<style scoped></style>
+<style scoped>
+.option {
+  padding: 1rem;
+  display: block;
+  background-color: #271c36;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+.option:hover {
+  background-color: #2d213f;
+}
+.option.correct {
+  background-color: #2cce7d;
+}
+.option.wrong {
+  background-color: #ff5a5f;
+}
+.option:last-of-type {
+  margin-bottom: 0;
+}
+.option.disabled {
+  opacity: 0.5;
+}
+.option input {
+  display: none;
+}
+</style>

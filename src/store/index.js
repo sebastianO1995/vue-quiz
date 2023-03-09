@@ -30,18 +30,14 @@ const store = createStore({
         !state.isLoading && (state.quizes.length === 0 || state.error.hasError)
       );
     },
-    getQuizes(state) {
-      if (state.quizes?.length) {
-        return state.quizes.map((quiz) => {
-          return {
-            questions: quiz.fields.questions,
-            quizName: quiz.fields.quizName,
-            totalQuestions: quiz.fields.questions.length,
-            id: quiz.sys.id,
-          };
-        });
+    getCurrentQuiz(state) {
+      if (state.selectedQuizId !== null && state.quizes.length) {
+        const filteredQuiz = state.quizes.filter(
+          (quiz) => quiz.id === state.selectedQuizId
+        );
+
+        return filteredQuiz[0];
       }
-      return [];
     },
   },
   mutations: {
@@ -67,7 +63,20 @@ const store = createStore({
           .then((entries) => {
             commit("SET_LOADING", false);
             console.log(entries.items);
-            commit("SET_QUIZES", entries?.items || []);
+            commit(
+              "SET_QUIZES",
+              entries?.items.map((quiz) => {
+                return {
+                  questions: quiz.fields.questions.map((question) => ({
+                    ...question.fields,
+                    id: question.sys.id,
+                  })),
+                  quizName: quiz.fields.quizName,
+                  totalQuestions: quiz.fields.questions.length,
+                  id: quiz.sys.id,
+                };
+              }) || []
+            );
           })
           .catch((error) => {
             commit("SET_LOADING", false);

@@ -1,12 +1,13 @@
 <script setup>
 import { onMounted, computed } from "vue";
 import { useStore } from "vuex";
+import QuizCentral from "./components/QuizCentral.vue";
 const store = useStore();
 onMounted(() => {
   store.dispatch("fetchQuizes");
 });
 
-const quizList = computed(() => store.getters.getQuizes);
+const quizList = computed(() => store.state.quizes);
 
 const startQuiz = (id) => {
   store.dispatch("selectQuiz", id);
@@ -34,10 +35,17 @@ const startQuiz = (id) => {
         <div v-else>No Quizes available</div>
       </section>
     </article>
-    <article v-else></article>
+
+    <QuizCentral v-else />
   </main>
 </template>
+
 <style scoped>
+article {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
 .quizes-container {
   margin-top: 1rem;
 }
