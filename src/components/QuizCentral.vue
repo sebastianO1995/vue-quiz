@@ -5,19 +5,63 @@ import QuestionOption from "./QuestionOption.vue";
 const store = useStore();
 const quizCompleted = ref(false);
 const currentQuestion = ref(0);
+const currentQuestionAnswer = ref(null);
+
 const currentQuiz = computed(() => {
   return store.getters.getCurrentQuiz;
 });
 
 const questions = computed(() => ({
   ...currentQuiz.value.questions,
-  selected: null,
 }));
 
 const getCurrentQuestion = computed(() => {
   let question = questions.value[currentQuestion.value];
   question.index = currentQuestion.value;
   return question;
+});
+
+const SetAnswer = (evt) => {
+  currentQuestionAnswer.value = evt.target.value;
+  evt.target.value = null;
+};
+const buttonText = computed(() => {
+  return getCurrentQuestion.value.index === currentQuiz.value.totalQuestions - 1
+    ? "Finish"
+    : currentQuestionAnswer === null
+    ? "Select an option"
+    : "Next Question";
+});
+
+const NextQuestion = () => {
+  if (currentQuestion.value < currentQuiz.value.totalQuestions - 1) {
+    currentQuestion.value++;
+    currentQuestionAnswer.value = null;
+  } else {
+    quizCompleted.value = true;
+  }
+};
+
+const SetOptionClass = (option) => {
+  const questionToSee = getCurrentQuestion.value;
+
+  const validClass =
+    currentQuestionAnswer.value === option
+      ? option === questionToSee.answer
+        ? "correct"
+        : "wrong"
+      : "";
+
+  const disabledClass =
+    currentQuestionAnswer.value !== null && option !== questionToSee.answer
+      ? "disabled"
+      : "";
+  return `${validClass} ${disabledClass}`;
+};
+const optionClass = computed(() => {
+  return (index) => {
+    return SetOptionClass(index);
+  };
 });
 </script>
 <template>
@@ -34,12 +78,24 @@ const getCurrentQuestion = computed(() => {
           :key="index"
           :optionText="option"
           :name="getCurrentQuestion.index"
-          :value="index"
-          v-model="getCurrentQuestion.selected"
+          :value="option"
+          v-model="currentQuestionAnswer"
+          @onChangeHandler="SetAnswer"
+          :class="optionClass(option)"
         />
       </div>
+      <button :disabled="currentQuestionAnswer === null" @click="NextQuestion">
+        {{ buttonText }}
+      </button>
     </section>
-    <section v-else></section>
+    <section v-else>
+      <h2>You have finished the quiz!</h2>
+      <p>Your Score is {{ score }} / {{ currentQuiz.totalQuestions }}</p>
+      <div class="quiz-end-btns">
+        <button @click="restartQuiz">Restart Quiz</button>
+        <button @click="goHome">Select a new Quiz</button>
+      </div>
+    </section>
   </article>
 </template>
 <style scoped>
@@ -73,5 +129,16 @@ p {
 
 .options {
   margin-bottom: 1rem;
+}
+
+button {
+  margin-top: 1rem;
+}
+
+.quiz-end-btns {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-around;
+  gap: 0.5rem;
 }
 </style>
