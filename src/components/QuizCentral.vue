@@ -84,6 +84,9 @@ const goHome = () => {
   <article>
     <h1>{{ currentQuiz.quizName }}</h1>
     <section class="quiz-container" v-if="!quizCompleted">
+      <div class="quiz-footer">
+        <button class="quit-btn" @click="goHome">Quit Quiz</button>
+      </div>
       <div class="quiz">
         <div class="quiz-info">
           <span class="question">{{ getCurrentQuestion.question }}</span>
@@ -111,9 +114,6 @@ const goHome = () => {
           {{ buttonText }}
         </button>
       </div>
-      <div class="quiz-footer">
-        <button class="quit-btn" @click="goHome">Quit Quiz</button>
-      </div>
     </section>
     <section v-else>
       <h2>You have finished the quiz!</h2>
@@ -130,7 +130,7 @@ const goHome = () => {
   background-color: #382a4b;
   padding: 1rem;
   width: 100%;
-  max-width: 640px;
+  max-width: 750px;
   margin: 0 auto;
   gap: 1rem;
 }
@@ -173,12 +173,13 @@ button {
 }
 .quiz-footer {
   width: 100%;
-  text-align: center;
+  text-align: right;
+  max-width: 750px;
+  margin: 0 auto;
 }
 .quit-btn {
-  margin: 0 auto;
   background: #8a8a55;
   color: black;
-  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 </style>
