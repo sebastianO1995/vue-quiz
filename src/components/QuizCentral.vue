@@ -6,7 +6,7 @@ const store = useStore();
 const quizCompleted = ref(false);
 const currentQuestion = ref(0);
 const currentQuestionAnswer = ref(null);
-
+const score = ref(0);
 const currentQuiz = computed(() => {
   return store.getters.getCurrentQuiz;
 });
@@ -23,6 +23,10 @@ const getCurrentQuestion = computed(() => {
 
 const SetAnswer = (evt) => {
   currentQuestionAnswer.value = evt.target.value;
+
+  if (evt.target.value === getCurrentQuestion.value.answer) {
+    score.value++;
+  }
   evt.target.value = null;
 };
 const buttonText = computed(() => {
@@ -63,6 +67,18 @@ const optionClass = computed(() => {
     return SetOptionClass(index);
   };
 });
+
+const restartQuiz = () => {
+  quizCompleted.value = false;
+  currentQuestion.value = 0;
+  currentQuestionAnswer.value = null;
+  score.value = 0;
+};
+
+const goHome = () => {
+  restartQuiz();
+  store.dispatch("selectQuiz", null);
+};
 </script>
 <template>
   <article>
@@ -70,7 +86,9 @@ const optionClass = computed(() => {
     <section v-if="!quizCompleted" class="quiz">
       <div class="quiz-info">
         <span class="question">{{ getCurrentQuestion.question }}</span>
-        <span class="score">Score / {{ currentQuiz.totalQuestions }} </span>
+        <span class="score"
+          >Score: {{ score }} / {{ currentQuiz.totalQuestions }}
+        </span>
       </div>
       <div class="options">
         <QuestionOption
