@@ -24,6 +24,23 @@ const store = createStore({
         !state.isLoading && state.quizes.length > 0 && !state.error.hasError
       );
     },
+    failedLoadingData(state) {
+      return (
+        !state.isLoading && (state.quizes.length === 0 || state.error.hasError)
+      );
+    },
+    getQuizes(state) {
+      if (state.quizes?.length) {
+        return state.quizes.map((quiz) => {
+          return {
+            questions: quiz.fields.questions,
+            quizName: quiz.fields.quizName,
+            totalQuestions: quiz.fields.questions.length,
+          };
+        });
+      }
+      return [];
+    },
   },
   mutations: {
     SET_LOADING(state, isLoading) {
@@ -32,17 +49,20 @@ const store = createStore({
     SET_ERROR(state, error) {
       state.error = error;
     },
+    SET_QUIZES(state, quizArrayList) {
+      state.quizes = quizArrayList;
+    },
   },
   actions: {
     fetchQuizes({ commit }) {
       if (token !== null && contentFulSpace !== null) {
         commit("SET_LOADING", true);
         contentfulClient
-          .getContentType("quizd")
-          .then((contentType) => {
+          .getEntries({ content_type: "quiz" })
+          .then((entries) => {
             commit("SET_LOADING", false);
-
-            console.log(contentType);
+            console.log(entries.items);
+            commit("SET_QUIZES", entries?.items || []);
           })
           .catch((error) => {
             commit("SET_LOADING", false);
