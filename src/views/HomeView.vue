@@ -1,27 +1,24 @@
 <script setup>
-import { onMounted, computed, ref } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
-import Card from '../components/Card.vue';
-import QuizCentral from '../components/QuizCentral.vue';
-const store = useStore();
-const router = useRouter();
-const searchInput = ref('');
-onMounted(() => {
-  store.dispatch('fetchQuizes');
-});
+  import { computed, ref } from 'vue';
+  import { useStore } from 'vuex';
+  import { useRouter } from 'vue-router';
+  import Card from '../components/Card.vue';
+  import QuizCentral from '../components/QuizCentral.vue';
+  const store = useStore();
+  const router = useRouter();
+  const searchInput = ref('');
 
-const quizList = computed(() => {
-  return store.state.quizes.filter((quiz) =>
-    quiz.quizName.toLowerCase().includes(searchInput.value.toLowerCase())
-  );
-});
+  const quizList = computed(() => {
+    return store.state.quizes.filter((quiz) =>
+      quiz.quizName.toLowerCase().includes(searchInput.value.toLowerCase())
+    );
+  });
 
-const startQuiz = (id) => {
-  // store.dispatch('selectQuiz', id);
+  const startQuiz = (id) => {
+    // store.dispatch('selectQuiz', id);
 
-  router.push(`/quiz/${id}`);
-};
+    router.push(`/quiz/${id}`);
+  };
 </script>
 <template>
   <article v-if="store.state.selectedQuizId === null">
@@ -51,12 +48,12 @@ const startQuiz = (id) => {
 </template>
 
 <style scoped>
-article {
-  max-width: 900px;
-  width: 100%;
-  margin: 0 auto;
-}
-.quizes-container {
-  margin-top: 1rem;
-}
+  article {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .quizes-container {
+    margin-top: 1rem;
+  }
 </style>
