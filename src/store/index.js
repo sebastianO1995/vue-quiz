@@ -15,8 +15,7 @@ const store = createStore({
       error: {
         message: null,
         hasError: false
-      },
-      selectedQuizId: null
+      }
     };
   },
   getters: {
@@ -30,15 +29,7 @@ const store = createStore({
         !state.isLoading && (state.quizes.length === 0 || state.error.hasError)
       );
     },
-    getCurrentQuiz(state) {
-      if (state.selectedQuizId !== null && state.quizes.length) {
-        const filteredQuiz = state.quizes.filter(
-          (quiz) => quiz.id === state.selectedQuizId
-        );
 
-        return filteredQuiz[0];
-      }
-    },
     getQuiz: (state) => (id) => {
       return state.quizes.find((quiz) => quiz.id === id) || null;
     }
@@ -52,9 +43,6 @@ const store = createStore({
     },
     SET_QUIZES(state, quizArrayList) {
       state.quizes = quizArrayList;
-    },
-    SET_SELECTED_QUIZID(state, id) {
-      state.selectedQuizId = id;
     }
   },
   actions: {
@@ -91,9 +79,6 @@ const store = createStore({
             });
           });
       }
-    },
-    selectQuiz({ commit }, quizId) {
-      commit('SET_SELECTED_QUIZID', quizId);
     }
   }
 });
