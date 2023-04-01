@@ -1,25 +1,33 @@
 <script setup>
-import { onMounted, computed } from "vue";
+import { onMounted, computed, ref, watch } from "vue";
 import { useStore } from "vuex";
 import QuizCentral from "./components/QuizCentral.vue";
 const store = useStore();
+const searchInput = ref("");
 onMounted(() => {
   store.dispatch("fetchQuizes");
 });
 
-const quizList = computed(() => store.state.quizes);
+const quizList = ref(store.state.quizes);
 
 const startQuiz = (id) => {
   store.dispatch("selectQuiz", id);
 };
+
+watch(searchInput, () => {
+  quizList.value = store.state.quizes.filter((quiz) =>
+    quiz.quizName.toLowerCase().includes(searchInput.value.toLowerCase())
+  );
+});
 </script>
 <template>
-  <main class="app">
+  <main class="quiz-app">
     <article v-if="store.state.selectedQuizId === null">
       <h5 v-if="store.state.isLoading">...Loading</h5>
       <section v-else-if="store.getters.hasQuizData">
         <h1>Welcome to Quiz Central</h1>
-        <h2>Please select a quiz:</h2>
+        <input placeholder="Search..." v-model.trim="searchInput" type="text" />
+
         <div class="quizes-container">
           <div v-for="(quiz, index) in quizList" class="quiz-box" :key="index">
             <div class="quiz-details">
