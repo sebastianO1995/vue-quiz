@@ -1,33 +1,39 @@
 <script setup>
-import { onMounted, computed } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
+import Card from "./components/Card.vue";
 import QuizCentral from "./components/QuizCentral.vue";
 const store = useStore();
+const searchInput = ref("");
 onMounted(() => {
   store.dispatch("fetchQuizes");
 });
 
-const quizList = computed(() => store.state.quizes);
+const quizList = computed(() => {
+  return store.state.quizes.filter((quiz) =>
+    quiz.quizName.toLowerCase().includes(searchInput.value.toLowerCase())
+  );
+});
 
 const startQuiz = (id) => {
   store.dispatch("selectQuiz", id);
 };
 </script>
 <template>
-  <main class="app">
+  <main class="quiz-app">
     <article v-if="store.state.selectedQuizId === null">
       <h5 v-if="store.state.isLoading">...Loading</h5>
       <section v-else-if="store.getters.hasQuizData">
         <h1>Welcome to Quiz Central</h1>
-        <h2>Please select a quiz:</h2>
+        <input placeholder="Search..." v-model.trim="searchInput" type="text" />
+
         <div class="quizes-container">
-          <div v-for="(quiz, index) in quizList" class="quiz-box" :key="index">
-            <div class="quiz-details">
-              <h3>{{ quiz.quizName }}</h3>
-              <p>Total Questions: {{ quiz.totalQuestions }}</p>
-            </div>
-            <button @click="startQuiz(quiz.id)">Start Quiz</button>
-          </div>
+          <Card
+            v-for="(quiz, index) in quizList"
+            :key="index"
+            :quiz="quiz"
+            @onQuizClick="startQuiz"
+          />
         </div>
       </section>
       <section v-else-if="store.getters.failedLoadingData">
@@ -50,19 +56,5 @@ article {
 }
 .quizes-container {
   margin-top: 1rem;
-}
-
-.quiz-box {
-  padding: 1.25rem;
-  border: 1px solid #fff;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  align-items: center;
-}
-.quiz-box .quiz-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 }
 </style>
