@@ -1,6 +1,7 @@
 <script setup>
-import { onMounted, computed, ref, watch } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { useStore } from "vuex";
+import Card from "./components/Card.vue";
 import QuizCentral from "./components/QuizCentral.vue";
 const store = useStore();
 const searchInput = ref("");
@@ -8,17 +9,15 @@ onMounted(() => {
   store.dispatch("fetchQuizes");
 });
 
-const quizList = ref(store.state.quizes);
+const quizList = computed(() => {
+  return store.state.quizes.filter((quiz) =>
+    quiz.quizName.toLowerCase().includes(searchInput.value.toLowerCase())
+  );
+});
 
 const startQuiz = (id) => {
   store.dispatch("selectQuiz", id);
 };
-
-watch(searchInput, () => {
-  quizList.value = store.state.quizes.filter((quiz) =>
-    quiz.quizName.toLowerCase().includes(searchInput.value.toLowerCase())
-  );
-});
 </script>
 <template>
   <main class="quiz-app">
@@ -29,13 +28,12 @@ watch(searchInput, () => {
         <input placeholder="Search..." v-model.trim="searchInput" type="text" />
 
         <div class="quizes-container">
-          <div v-for="(quiz, index) in quizList" class="quiz-box" :key="index">
-            <div class="quiz-details">
-              <h3>{{ quiz.quizName }}</h3>
-              <p>Total Questions: {{ quiz.totalQuestions }}</p>
-            </div>
-            <button @click="startQuiz(quiz.id)">Start Quiz</button>
-          </div>
+          <Card
+            v-for="(quiz, index) in quizList"
+            :key="index"
+            :quiz="quiz"
+            @onQuizClick="startQuiz"
+          />
         </div>
       </section>
       <section v-else-if="store.getters.failedLoadingData">
@@ -58,19 +56,5 @@ article {
 }
 .quizes-container {
   margin-top: 1rem;
-}
-
-.quiz-box {
-  padding: 1.25rem;
-  border: 1px solid #fff;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  align-items: center;
-}
-.quiz-box .quiz-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 }
 </style>
