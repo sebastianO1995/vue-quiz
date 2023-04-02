@@ -18,6 +18,10 @@ body {
   margin: 0 auto;
 }
 
+article {
+  width: 100%;
+  margin: 0 auto;
+}
 h1 {
   font-size: 2rem;
   text-align: center;
