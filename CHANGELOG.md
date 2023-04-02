@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/sebastianO1995/vue-quiz/compare/v0.0.5...v0.0.6) (2023-04-02)
+
+
+### Bug Fixes
+
+* updated redirect file ([b8f65bc](https://github.com/sebastianO1995/vue-quiz/commit/b8f65bccb575d89a19118cfbfb5e37033fc6b67b))
+
 ### [0.0.5](https://github.com/sebastianO1995/vue-quiz/compare/v0.0.4...v0.0.5) (2023-04-02)
 
 
