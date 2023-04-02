@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, ref } from 'vue';
+  import { computed, ref, onMounted } from 'vue';
   import { useStore } from 'vuex';
   import { useRouter } from 'vue-router';
   import Card from '../components/Card.vue';
@@ -17,6 +17,10 @@
   const startQuiz = (id) => {
     router.push(`/quiz/${id}`);
   };
+
+  onMounted(() => {
+    store.dispatch('fetchQuizes');
+  });
 </script>
 <template>
   <article>
@@ -46,5 +50,18 @@
 <style scoped>
   .quizes-container {
     margin-top: 1rem;
+  }
+
+  input {
+    padding: 5px;
+    max-width: 200px;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 575px) {
+    input {
+      max-width: 100%;
+    }
   }
 </style>
