@@ -79,7 +79,7 @@
 
   const restartQuiz = () => {
     quizCompleted.value = false;
-    currentQuestion.index.value = 0;
+    currentQuestionIndex.value = 0;
     currentQuestionAnswer.value = null;
     score.value = 0;
   };
@@ -92,7 +92,11 @@
   <article>
     <div v-if="store.state.isLoading">Loading quiz....</div>
     <div class="quiz-page" v-else>
-      <QuizHeader :quizName="quiz.quizName" />
+      <QuizHeader
+        :quizName="quiz.quizName"
+        :showBtn="!quizCompleted"
+        @btnClick="goHome"
+      />
       <section class="quiz-body" v-if="!quizCompleted">
         <div class="question-header">
           <span class="question">{{ currentQuestion.question }}</span>
@@ -120,7 +124,7 @@
           {{ buttonText }}
         </button>
       </section>
-      <section v-else>
+      <section v-else class="quiz-completed">
         <h2>You have finished the quiz!</h2>
         <p>Your Score is {{ outputScore }}</p>
         <div class="quiz-end-btns">
@@ -136,8 +140,7 @@
     background-color: #382a4b;
     padding: 1rem;
     width: 100%;
-    max-width: 750px;
-    margin: 0 auto;
+
     gap: 1rem;
   }
   .question-header {
@@ -172,5 +175,15 @@
     display: flex;
     justify-content: space-around;
     gap: 0.5rem;
+  }
+
+  .quiz-completed {
+    margin-top: 1.25rem;
+  }
+
+  p {
+    color: #8f8f8f;
+    font-size: 1.5rem;
+    text-align: center;
   }
 </style>

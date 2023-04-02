@@ -1,17 +1,17 @@
 <template>
   <div class="quiz-header">
     <h1>{{ props.quizName }}</h1>
-    <div class="btn-wrapper">
+    <div class="btn-wrapper" v-show="showBtn">
       <button class="quit-btn" @click="handleQuit">Quit Quiz</button>
     </div>
   </div>
 </template>
 <script setup>
-  const props = defineProps(['quizName']);
-  const emit = defineEmits(['goHome']);
+  const props = defineProps(['quizName', 'showBtn']);
+  const emit = defineEmits(['btnClick']);
 
   const handleQuit = () => {
-    emit('goHome');
+    emit('btnClick');
   };
 </script>
 <style scoped>
@@ -19,6 +19,7 @@
     width: 100%;
     display: flex;
     justify-content: end;
+    margin-top: 1rem;
   }
   .quit-btn {
     background: #8a8a55;
