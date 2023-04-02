@@ -1,185 +1,176 @@
 <script setup>
-import { useStore } from "vuex";
-import { computed, ref } from "vue";
-import QuestionOption from "./QuestionOption.vue";
-const store = useStore();
-const quizCompleted = ref(false);
-const currentQuestion = ref(0);
-const currentQuestionAnswer = ref(null);
-const score = ref(0);
-const currentQuiz = computed(() => {
-  return store.getters.getCurrentQuiz;
-});
+  import { computed, ref } from 'vue';
+  import QuizHeader from './Quiz/QuizHeader.vue';
+  import QuestionOption from './QuestionOption.vue';
+  import { useRouter } from 'vue-router';
+  const router = useRouter();
 
-const questions = computed(() => ({
-  ...currentQuiz.value.questions,
-}));
+  const props = defineProps(['quiz']);
+  const quizCompleted = ref(false);
+  const currentQuestionIndex = ref(0);
+  const currentQuestionAnswer = ref(null);
+  const score = ref(0);
 
-const getCurrentQuestion = computed(() => {
-  let question = questions.value[currentQuestion.value];
-  question.index = currentQuestion.value;
-  return question;
-});
+  const questions = computed(() => ({ ...props.quiz.questions }));
 
-const SetAnswer = (evt) => {
-  currentQuestionAnswer.value = evt.target.value;
+  const currentQuestion = computed(() => {
+    const question = questions.value[currentQuestionIndex.value];
+    question.index = currentQuestionIndex.value;
+    return question;
+  });
 
-  if (evt.target.value === getCurrentQuestion.value.answer) {
-    score.value++;
-  }
-  evt.target.value = null;
-};
-const buttonText = computed(() => {
-  return getCurrentQuestion.value.index === currentQuiz.value.totalQuestions - 1
-    ? "Finish"
-    : currentQuestionAnswer === null
-    ? "Select an option"
-    : "Next Question";
-});
+  const outputScore = computed(
+    () => `${score.value}/${props.quiz.totalQuestions}`
+  );
 
-const NextQuestion = () => {
-  if (currentQuestion.value < currentQuiz.value.totalQuestions - 1) {
-    currentQuestion.value++;
-    currentQuestionAnswer.value = null;
-  } else {
-    quizCompleted.value = true;
-  }
-};
+  const SetAnswer = (evt) => {
+    currentQuestionAnswer.value = evt.target.value;
 
-const SetOptionClass = (option) => {
-  const questionToSee = getCurrentQuestion.value;
-
-  const validClass =
-    currentQuestionAnswer.value === option
-      ? option === questionToSee.answer
-        ? "correct"
-        : "wrong"
-      : "";
-
-  const disabledClass =
-    currentQuestionAnswer.value !== null && option !== questionToSee.answer
-      ? "disabled"
-      : "";
-  return `${validClass} ${disabledClass}`;
-};
-const optionClass = computed(() => {
-  return (index) => {
-    return SetOptionClass(index);
+    if (evt.target.value === currentQuestion.value.answer) {
+      score.value++;
+    }
+    evt.target.value = null;
   };
-});
 
-const restartQuiz = () => {
-  quizCompleted.value = false;
-  currentQuestion.value = 0;
-  currentQuestionAnswer.value = null;
-  score.value = 0;
-};
+  const SetOptionClass = (option) => {
+    const questionToSee = currentQuestion.value;
 
-const goHome = () => {
-  restartQuiz();
-  store.dispatch("selectQuiz", null);
-};
+    const validClass =
+      currentQuestionAnswer.value === option
+        ? option === questionToSee.answer
+          ? 'correct'
+          : 'wrong'
+        : '';
+
+    const disabledClass =
+      currentQuestionAnswer.value !== null && option !== questionToSee.answer
+        ? 'disabled'
+        : '';
+    return `${validClass} ${disabledClass}`;
+  };
+
+  const optionClass = computed(() => {
+    return (index) => {
+      return SetOptionClass(index);
+    };
+  });
+
+  const buttonText = computed(() => {
+    return currentQuestion.value.index === props.quiz.totalQuestions - 1
+      ? 'Finish'
+      : currentQuestionAnswer === null
+      ? 'Select an option'
+      : 'Next Question';
+  });
+
+  const NextQuestion = () => {
+    if (currentQuestionIndex.value < props.quiz.totalQuestions - 1) {
+      currentQuestionIndex.value++;
+      currentQuestionAnswer.value = null;
+    } else {
+      quizCompleted.value = true;
+    }
+  };
+
+  const restartQuiz = () => {
+    quizCompleted.value = false;
+    currentQuestionIndex.value = 0;
+    currentQuestionAnswer.value = null;
+    score.value = 0;
+  };
+
+  const goHome = () => {
+    router.push('/');
+  };
 </script>
 <template>
-  <article>
-    <h1>{{ currentQuiz.quizName }}</h1>
-    <section class="quiz-container" v-if="!quizCompleted">
-      <div class="quiz-footer">
-        <button class="quit-btn" @click="goHome">Quit Quiz</button>
-      </div>
-      <div class="quiz">
-        <div class="quiz-info">
-          <span class="question">{{ getCurrentQuestion.question }}</span>
-          <span class="score"
-            >Score
-            <span>{{ score }} / {{ currentQuiz.totalQuestions }}</span>
-          </span>
-        </div>
-        <div class="options">
-          <QuestionOption
-            v-for="(option, index) in getCurrentQuestion.options"
-            :key="index"
-            :optionText="option"
-            :name="getCurrentQuestion.index"
-            :value="option"
-            v-model="currentQuestionAnswer"
-            @onChangeHandler="SetAnswer"
-            :class="optionClass(option)"
-          />
-        </div>
-        <button
-          :disabled="currentQuestionAnswer === null"
-          @click="NextQuestion"
-        >
-          {{ buttonText }}
-        </button>
-      </div>
-    </section>
-    <section v-else>
-      <h2>You have finished the quiz!</h2>
-      <p>Your Score is {{ score }} / {{ currentQuiz.totalQuestions }}</p>
-      <div class="quiz-end-btns">
-        <button @click="restartQuiz">Restart Quiz</button>
-        <button @click="goHome">Select a new Quiz</button>
-      </div>
-    </section>
-  </article>
+  <QuizHeader
+    :quizName="props.quiz.quizName"
+    :showBtn="!quizCompleted"
+    @btnClick="goHome"
+  />
+  <section class="quiz-body" v-if="!quizCompleted">
+    <div class="question-header">
+      <span class="question">{{ currentQuestion.question }}</span>
+      <span class="score"
+        >Score
+        <span>{{ outputScore }}</span>
+      </span>
+    </div>
+    <div class="question-options" v-if="!quizCompleted">
+      <QuestionOption
+        v-for="(option, index) in currentQuestion.options"
+        :key="index"
+        :optionText="option"
+        :name="currentQuestion.index"
+        :value="option"
+        v-model="currentQuestionAnswer"
+        @onChangeHandler="SetAnswer"
+        :class="optionClass(option)"
+      />
+    </div>
+    <button :disabled="currentQuestionAnswer === null" @click="NextQuestion">
+      {{ buttonText }}
+    </button>
+  </section>
+  <section v-else class="quiz-completed">
+    <h2>You have finished the quiz!</h2>
+    <p>Your Score is {{ outputScore }}</p>
+    <div class="quiz-end-btns">
+      <button @click="restartQuiz">Restart Quiz</button>
+      <button @click="goHome">Select a new Quiz</button>
+    </div>
+  </section>
 </template>
 <style scoped>
-.quiz {
-  background-color: #382a4b;
-  padding: 1rem;
-  width: 100%;
-  max-width: 750px;
-  margin: 0 auto;
-  gap: 1rem;
-}
-p {
-  color: #8f8f8f;
-  font-size: 1.5rem;
-  text-align: center;
-}
-.quiz-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  align-items: center;
-  gap: 1.25rem;
-}
-.quiz-info .question {
-  color: #8f8f8f;
-  font-size: 1rem;
-}
-.quiz-info .score {
-  color: #fff;
-  font-size: 1rem;
-}
-.score span {
-  display: block;
-}
-.options {
-  margin-bottom: 1rem;
-}
+  .quiz-body {
+    background-color: #382a4b;
+    padding: 1rem;
+    width: 100%;
 
-button {
-  margin-top: 1rem;
-}
+    gap: 1rem;
+  }
+  .question-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .question-header .question {
+    color: #8f8f8f;
+    font-size: 1rem;
+  }
+  .question-header .score {
+    color: #fff;
+    font-size: 1rem;
+  }
+  .score span {
+    display: block;
+  }
 
-.quiz-end-btns {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: space-around;
-  gap: 0.5rem;
-}
-.quiz-footer {
-  width: 100%;
-  text-align: right;
-  max-width: 750px;
-  margin: 0 auto;
-}
-.quit-btn {
-  background: #8a8a55;
-  color: black;
-  margin-bottom: 1.25rem;
-}
+  .question-options {
+    margin-bottom: 1rem;
+  }
+
+  button {
+    margin-top: 1rem;
+  }
+
+  .quiz-end-btns {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-around;
+    gap: 0.5rem;
+  }
+
+  .quiz-completed {
+    margin-top: 1.25rem;
+  }
+
+  p {
+    color: #8f8f8f;
+    font-size: 1.5rem;
+    text-align: center;
+  }
 </style>

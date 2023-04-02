@@ -2,23 +2,28 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 body {
   background-color: #271c36;
   color: #fff;
 }
-.app {
+.quiz-app {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
   height: 100vh;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
+article {
+  width: 100%;
+  margin: 0 auto;
+}
 h1 {
   font-size: 2rem;
-  margin-bottom: 2rem;
   text-align: center;
 }
 
