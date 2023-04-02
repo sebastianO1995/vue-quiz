@@ -15,6 +15,10 @@ const store = createStore({
       error: {
         message: null,
         hasError: false
+      },
+      contentfulSettings: {
+        space: contentFulSpace,
+        token
       }
     };
   },
