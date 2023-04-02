@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 body {
   background-color: #271c36;
@@ -14,8 +14,14 @@ body {
   align-items: center;
   padding: 2rem;
   height: 100vh;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
+article {
+  width: 100%;
+  margin: 0 auto;
+}
 h1 {
   font-size: 2rem;
   text-align: center;
