@@ -51,4 +51,17 @@
   .quizes-container {
     margin-top: 1rem;
   }
+
+  input {
+    padding: 5px;
+    max-width: 200px;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 575px) {
+    input {
+      max-width: 100%;
+    }
+  }
 </style>
